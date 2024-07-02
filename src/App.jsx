@@ -1,5 +1,6 @@
 import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
+
 // import { createContext, useContext } from "react";
 
 // const ThemeContext = createContext(null);
@@ -45,3 +46,7 @@ export default function App() {
     </div>
   );
 }
+
+// pnpm create vite = membuat folder baru
+// pnpm i = untuk download folder node_modules
+// pnpm i react-router-dom = untuk download react-router-dom

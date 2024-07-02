@@ -40,62 +40,98 @@ let initialproductss = [
   },
 ];
 
-const saveProduct = localStorage.getItem("products");
+const saveProduct = localStorage.getItem("productss");
 
 export default function Home() {
-  const [products, setProducts] = useState(
-    saveProduct ? JSON.parse(saveProduct) : initialProducts
+  const [productss, setproductss] = useState(
+    saveProduct ? JSON.parse(saveProduct) : initialproductss
   );
   const [updateProduct, setUpdateProduct] = useState(null);
   const [addProduct, setAddProduct] = useState(null);
-  const sortedProduct = products.sort((a, b) => a.price - b.price);
+  const [orderBy, setOrderBy] = useState("asc");
+  const [sortBy, setSortBy] = useState("id");
+  const [search, setSearch] = useState("");
+
+  const filterData = productss
+    .sort((a, b) => {
+      if (orderBy === "asc") {
+        return a[sortBy] < b[sortBy] ? -1 : 1;
+      } else {
+        return a[sortBy] > b[sortBy] ? -1 : 1;
+      }
+    })
+    .filter((item) => {
+      //INCLUDES memeriksa apakah suatu array atau string berisi nilai atau substring tertentu
+      return item.name.toLowerCase().includes(search.toLowerCase());
+    });
 
   function handleDelete(product) {
     if (window.confirm("Apakah kamu yakin hapus ini?")) {
-      setProducts(products.filter((p) => p.id !== product.id));
+      setproductss(productss.filter((p) => p.id !== product.id));
     }
   }
 
   function handleUpdate() {
-    setProducts(
-      products.map((a) => (a.id === updateProduct.id ? updateProduct : a))
+    setproductss(
+      productss.map((a) => (a.id === updateProduct.id ? updateProduct : a))
     );
     setUpdateProduct(null);
   }
 
   function handleAddProduct() {
     const newId =
-      products.length > 0 ? Math.max(...products.map((p) => p.id)) + 1 : 1;
-    setProducts([...products, { ...addProduct, id: newId }]);
+      productss.length > 0 ? Math.max(...productss.map((p) => p.id)) + 1 : 1;
+    setproductss([...productss, { ...addProduct, id: newId }]);
     setAddProduct(null); //
   }
 
   useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  });
+    localStorage.setItem("productss", JSON.stringify(productss));
+  }),
+    [productss];
 
-  console.log(products);
+  console.log(productss);
   return (
     <div>
       <div className="flex w-full items-center p-3">
         <div
           className="flex w-1/4 gap-2 justify-center"
-          onClick={() => setAddProduct(products)}
+          onClick={() => setAddProduct(productss)}
         >
           <Plus />
           Add
         </div>
-        <div className=" flex w-2/4 bg-slate-300 p-4 gap-1">
+        <div className=" flex w-2/4  p-4 gap-1">
           <Search />
           <input
             type="text"
-            className="bg-transparent w-full p-2"
-            value="Search"
+            className="bg-gray-200 w-full p-2 rounded-xl"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        <label className="flex gap-1">
+          <h1>urutkan</h1>
+          <select
+            className="border border-collapse"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="id">Normal</option>
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+          </select>
+        </label>
+        <label className="flex ">
+          <h1>urutkan</h1>
+          <select value={orderBy} onChange={(e) => setOrderBy(e.target.value)}>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </label>
       </div>
       <div className="flex justify-center items-center gap-6">
-        {sortedProduct.map((product) => (
+        {filterData.map((product) => (
           <div key={product.id}>
             <div>
               <img
@@ -162,62 +198,89 @@ export default function Home() {
                 }
                 className="border border-gray-300 p-2 mb-4 w-full"
               />
-              <button type="submit">Save</button>
-              <button type="button" onClick={() => setUpdateProduct(null)}>
-                Cancel
-              </button>
+              <div className="flex gap-2 justify-center items-center">
+                <button
+                  className="bg-blue-200 shadow-lg p-1 hover:bg-blue-500 w-full"
+                  type="submit"
+                >
+                  Save
+                </button>
+                <button
+                  className="bg-blue-200 shadow-lg p-1 hover:bg-blue-500 w-full"
+                  type="button"
+                  onClick={() => setUpdateProduct(null)}
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
       )}
       {addProduct && (
         <div>
-          <div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleAddProduct();
-              }}
-            >
-              <label>Name Product : </label>
-              <input
-                type="text"
-                id="name"
-                value={addProduct.name}
-                onChange={(e) =>
-                  setAddProduct({ ...addProduct, name: e.target.value })
-                }
-              />
-              <label>Price : </label>
-              <input
-                type="number"
-                id="price"
-                value={addProduct.price}
-                onChange={(e) =>
-                  setAddProduct({
-                    ...addProduct,
-                    price: parseInt(e.target.value),
-                  })
-                }
-              />
-              <label>Image Url : </label>
-              <input
-                type="text"
-                id="price"
-                value={addProduct.image}
-                onChange={(e) =>
-                  setAddProduct({
-                    ...addProduct,
-                    image: e.target.value,
-                  })
-                }
-              />
+          <div className="fixed inset-0 items-center justify-center bg-gray-900 bg-opacity-50">
+            <div className="bg-white w-1/4 p-4">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddProduct();
+                }}
+              >
+                <label>Name Product : </label>
+                <input
+                  className="border border-gray-300 p-2 mb-4 w-full"
+                  type="text"
+                  id="name"
+                  value={addProduct.name}
+                  onChange={(e) =>
+                    setAddProduct({ ...addProduct, name: e.target.value })
+                  }
+                />
+                <label>Price : </label>
+                <input
+                  className="border border-gray-300 p-2 mb-4 w-full"
+                  type="number"
+                  id="price"
+                  value={addProduct.price}
+                  onChange={(e) =>
+                    setAddProduct({
+                      ...addProduct,
+                      price: parseInt(e.target.value),
+                    })
+                  }
+                />
+                <label>Image Url : </label>
+                <input
+                  className="border border-gray-300 p-2 mb-4 w-full"
+                  type="text"
+                  id="price"
+                  value={addProduct.image}
+                  onChange={(e) =>
+                    setAddProduct({
+                      ...addProduct,
+                      image: e.target.value,
+                    })
+                  }
+                />
 
-              <button type="submit">Save</button>
-              <button type="button" onClick={() => setAddProduct(null)}>
-                Cancel
-              </button>
-            </form>
+                <div className="flex gap-2 justify-center items-center">
+                  <button
+                    className="bg-blue-200 w-full p-1 hover:bg-blue-500"
+                    type="submit"
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="bg-blue-200 w-full p-1 hover:bg-blue-500"
+                    type="button"
+                    onClick={() => setAddProduct(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
