@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Trash, SquarePen } from "lucide-react";
 import { Plus, Search } from "lucide-react";
 
-let initialProducts = [
+let initialproductss = [
   {
     id: 1,
     name: "Baju Gamis",
