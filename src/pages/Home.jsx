@@ -92,7 +92,7 @@ export default function Home() {
 
   console.log(productss);
   return (
-    <div>
+    <div className="min-h-screen">
       <div className="flex w-full items-center p-3">
         <div
           className="flex w-1/4 gap-2 justify-center"
