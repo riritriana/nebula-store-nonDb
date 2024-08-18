@@ -11,6 +11,7 @@ export default function App() {
     </div>
   );
 }
+
 // import { createContext, useContext } from "react";
 
 // const ThemeContext = createContext(null);
@@ -49,6 +50,6 @@ export default function App() {
 //   return <button className={className}>{children}</button>;
 // }
 
-// pnpm create vite = membuat folder baru
-// pnpm i = untuk download folder node_modules
-// pnpm i react-router-dom = untuk download react-router-dom
+// // pnpm create vite = membuat folder baru
+// // pnpm i = untuk download folder node_modules
+// // pnpm i react-router-dom = untuk download react-router-dom
